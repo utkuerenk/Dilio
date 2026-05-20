@@ -1,1 +1,41 @@
+name: Flet APK Build
+on:
+  push:
+    branches: [ main ]
 
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodu Buluta Çek
+        uses: actions/checkout@v4
+
+      - name: Java Kurulumu
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Android SDK Ayarla
+        uses: android-actions/setup-android@v3
+
+      - name: Python Kurulumu
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Flet ve Bağımlılıkları Yükle
+        run: |
+          pip install flet
+          # Eğer ek kütüphanelerin varsa (requests vb.) alt satıra ekleyebilirsin:
+          # pip install requests
+
+      - name: APK Derleme İşlemini Başlat
+        run: |
+          flet build apk
+
+      - name: Üretilen APK Dosyasını Çıkar
+        uses: actions/upload-artifact@v4
+        with:
+          name: flet-app-apk
+          path: build/apk/*.apk
